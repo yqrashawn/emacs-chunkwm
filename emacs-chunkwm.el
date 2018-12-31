@@ -27,38 +27,63 @@
 
 (require 's)
 (require 'async)
+(require 'windmove)
 
 (defvar emacs-chunkwm-command "chunkc")
 
-(defvar emacs-chunkwm-focus-direction nil)
-
 ;; tiling focus
 (defun emacs-chunkwm-tiling-focus (direction)
-  (async-start-process "chunkc" "chunkc" 'ignore "tiling::window" "--focus" direction))
+  (async-start-process emacs-chunkwm-command emacs-chunkwm-command 'ignore "tiling::window" "--focus" direction))
 
 (defun emacs-chunkwm-tiling-left ()
   (interactive)
   (emacs-chunkwm-tiling-focus "west"))
 
-(defun emacs-chunkwm-tiling-right ()
+(defun emacs-chunkwm-tiling-down ()
   (interactive)
-  (emacs-chunkwm-tiling-focus "east"))
+  (emacs-chunkwm-tiling-focus "south"))
 
 (defun emacs-chunkwm-tiling-up ()
   (interactive)
   (emacs-chunkwm-tiling-focus "north"))
 
-(defun emacs-chunkwm-tiling-down ()
+(defun emacs-chunkwm-tiling-right ()
   (interactive)
-  (emacs-chunkwm-tiling-focus "south"))
+  (emacs-chunkwm-tiling-focus "east"))
+
+;; integrate with winmove
+(defun emacs-chunkwm-winmove-left (&optional arg)
+  (interactive)
+  (if (null (windmove-find-other-window 'left))
+      (emacs-chunkwm-tiling-left)
+    (windmove-left)))
+
+(defun emacs-chunkwm-winmove-down (&optional arg)
+  (interactive)
+  (if (null (windmove-find-other-window 'down))
+      (emacs-chunkwm-tiling-down)
+    (windmove-down)))
+
+(defun emacs-chunkwm-winmove-up (&optional arg)
+  (interactive)
+  (if (null (windmove-find-other-window 'up))
+      (emacs-chunkwm-tiling-up)
+    (windmove-up)))
+
+(defun emacs-chunkwm-winmove-right (&optional arg)
+  (interactive)
+  (if (null (windmove-find-other-window 'right))
+      (emacs-chunkwm-tiling-right)
+    (windmove-right)))
 
 (defun emacs-chunkwm-get-current-desktop-windows()
-  (let ((chunkc-result (async-get
-                        (async-start
-                         (lambda ()
-                           (process-lines
-                            "chunkc" "tiling::query" "--desktop" "windows"))
-                         nil))))
+  (let ((chunkc-result
+         (async-get
+          (async-start
+           (lambda ()
+             (process-lines
+              emacs-chunkwm-command "tiling::query" "--desktop" "windows"))
+           nil))))
     (mapcar
      (lambda (line)
        (mapcar
