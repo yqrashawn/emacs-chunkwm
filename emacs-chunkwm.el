@@ -29,11 +29,9 @@
 (require 'async)
 (require 'windmove)
 
-(defvar emacs-chunkwm-command "chunkc")
-
 ;; tiling focus
 (defun emacs-chunkwm-tiling-focus (direction)
-  (async-start-process emacs-chunkwm-command emacs-chunkwm-command 'ignore "tiling::window" "--focus" direction))
+  (async-start-process "chunkc" "chunkc" 'ignore "tiling::window" "--focus" direction))
 
 (defun emacs-chunkwm-tiling-left ()
   (interactive)
@@ -82,7 +80,7 @@
           (async-start
            (lambda ()
              (process-lines
-              emacs-chunkwm-command "tiling::query" "--desktop" "windows"))
+              "chunkc" "tiling::query" "--desktop" "windows"))
            nil))))
     (mapcar
      (lambda (line)
@@ -92,6 +90,15 @@
           (string-remove-prefix ", " split))
         (s-slice-at "," line)))
      chunkc-result)))
+
+(defun emacs-chunkwm-get-app-window-info (app-name)
+  (async-get
+   (async-start
+    (lambda ()
+      (process-lines
+       "GetWindowId"
+       app-name
+       "--list")))))
 
 (provide 'emacs-chunkwm)
 ;;; emacs-chunkwm.el ends here
