@@ -51,26 +51,26 @@
   (interactive)
   (emacs-chunkwm-tiling-focus "east"))
 
-;; integrate with winmove
-(defun emacs-chunkwm-winmove-left (&optional arg)
+;; integrate with windmove
+(defun emacs-chunkwm-windmove-left (&optional arg)
   (interactive)
   (if (null (windmove-find-other-window 'left))
       (emacs-chunkwm-tiling-left)
     (windmove-left)))
 
-(defun emacs-chunkwm-winmove-down (&optional arg)
+(defun emacs-chunkwm-windmove-down (&optional arg)
   (interactive)
   (if (null (windmove-find-other-window 'down))
       (emacs-chunkwm-tiling-down)
     (windmove-down)))
 
-(defun emacs-chunkwm-winmove-up (&optional arg)
+(defun emacs-chunkwm-windmove-up (&optional arg)
   (interactive)
   (if (null (windmove-find-other-window 'up))
       (emacs-chunkwm-tiling-up)
     (windmove-up)))
 
-(defun emacs-chunkwm-winmove-right (&optional arg)
+(defun emacs-chunkwm-windmove-right (&optional arg)
   (interactive)
   (if (null (windmove-find-other-window 'right))
       (emacs-chunkwm-tiling-right)
