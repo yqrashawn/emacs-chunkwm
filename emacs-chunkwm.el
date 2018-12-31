@@ -26,6 +26,31 @@
 ;;; Code:
 
 (require 's)
+(require 'async)
+
+(defvar emacs-chunkwm-command "chunkc")
+
+(defvar emacs-chunkwm-focus-direction nil)
+
+;; tiling focus
+(defun emacs-chunkwm-tiling-focus (direction)
+  (async-start-process "chunkc" "chunkc" 'ignore "tiling::window" "--focus" direction))
+
+(defun emacs-chunkwm-tiling-left ()
+  (interactive)
+  (emacs-chunkwm-tiling-focus "west"))
+
+(defun emacs-chunkwm-tiling-right ()
+  (interactive)
+  (emacs-chunkwm-tiling-focus "east"))
+
+(defun emacs-chunkwm-tiling-up ()
+  (interactive)
+  (emacs-chunkwm-tiling-focus "north"))
+
+(defun emacs-chunkwm-tiling-down ()
+  (interactive)
+  (emacs-chunkwm-tiling-focus "south"))
 
 (defun emacs-chunkwm-get-current-desktop-windows()
   (let ((chunkc-result (async-get
@@ -34,7 +59,14 @@
                            (process-lines
                             "chunkc" "tiling::query" "--desktop" "windows"))
                          nil))))
-    (mapcar (lambda (line) (s-slice-at "," line)) chunkc-result)))
+    (mapcar
+     (lambda (line)
+       (mapcar
+        (lambda (split)
+          (print split)
+          (string-remove-prefix ", " split))
+        (s-slice-at "," line)))
+     chunkc-result)))
 
 (provide 'emacs-chunkwm)
 ;;; emacs-chunkwm.el ends here
